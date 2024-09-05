@@ -2,10 +2,11 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  base: '/y-docs/',
   title: "阿洋的文档",
   description: "随便写写的地方",
   themeConfig: {
-    head: [["link", { rel: "icon", href: "/public/logo.png" }]],
+    head: [["link", { rel: "icon", href: "/y-docs/logo.png" }]],
     outlineTitle: '目录',
     outline: [2, 6],
     logo: '/public/logo.png',
