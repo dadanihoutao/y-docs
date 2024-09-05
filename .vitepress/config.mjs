@@ -6,7 +6,7 @@ export default defineConfig({
   title: "阿洋的文档",
   description: "随便写写的地方",
   themeConfig: {
-    head: [["link", { rel: "icon", href: "/y-docs/logo.png" }]],
+    head: [["link", { rel: "icon", href: "/y-docs/favicon.ico" }]],
     outlineTitle: '目录',
     outline: [2, 6],
     logo: '/logo.png',
