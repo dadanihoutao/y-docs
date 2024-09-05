@@ -7,7 +7,7 @@ hero:
   text: "随便写写的地方"
   tagline: 路漫漫其修远兮，吾将上下而求索
   image:
-    src: /public/bg-img-0.svg
+    src: /bg-img-0.svg
     alt: 背景图
   actions:
     - theme: brand

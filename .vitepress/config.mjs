@@ -9,7 +9,7 @@ export default defineConfig({
     head: [["link", { rel: "icon", href: "/y-docs/logo.png" }]],
     outlineTitle: '目录',
     outline: [2, 6],
-    logo: '/public/logo.png',
+    logo: '/logo.png',
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: '首页', link: '/' },
