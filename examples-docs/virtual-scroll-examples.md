@@ -21,12 +21,8 @@ outline: deep
 - 根据滚动位置计算应该显示哪些数据
 - 使用transform来移动实际显示的内容
 
-## 使用方法
-- 直接在浏览器中打开这个HTML文件
-- 可以通过修改data中的参数来调整：
-  - listData：数据量
-  - itemHeight：每项高度
-  - screenHeight：可视区域高度
+## 代码实现
+- 直接复制代码到本地 html 文件运行
 
 ```html
 <!DOCTYPE html>
