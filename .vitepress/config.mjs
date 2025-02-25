@@ -13,7 +13,7 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: '首页', link: '/' },
-      { text: '示例', link: '/examples-docs/markdown-examples' },
+      { text: '示例', link: '/examples-docs/virtual-scroll-examples' },
       { text: '前端', items: [
           { text: 'vue2', link: '/web-docs/vue2/' },
           { text: 'vue3', link: '/web-docs/vue3/' },
@@ -34,6 +34,7 @@ export default defineConfig({
         {
           text: '示例',
           items: [
+            { text: '虚拟滚动列表', link: '/examples-docs/virtual-scroll-examples' },
             { text: 'Markdown 示例', link: '/examples-docs/markdown-examples' },
             { text: 'Runtime API 示例', link: '/examples-docs/api-examples' }
           ]
