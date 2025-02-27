@@ -9,17 +9,22 @@ outline: deep
 - 只渲染可视区域的内容
 - 根据滚动位置动态更新显示的内容
 
-## 主要特点
-- 使用Vue.js实现，但原理适用于任何框架
-- 只渲染可视区域内的数据（约8-10条）
-- 使用transform来移动内容区域，提高性能
-- 支持10万条数据的流畅滚动
+## 虚拟滚动列表实现原理说明：
+- 创建一个固定高度的容器，设置overflow: auto启用滚动
+- 使用一个隐藏的元素(phantom)来撑起滚动条，高度等于所有列表项的总高度
+- 实际显示的内容容器通过transform来定位，位置根据滚动位置计算
+- 只渲染可视区域内的数据，根据滚动位置动态计算显示哪些数据
+- 当用户滚动时，更新scrollTop，重新计算可见数据
 
-## 实现原理
-- 创建一个固定高度的容器
-- 使用一个隐藏的元素（phantom）来撑开滚动条
-- 根据滚动位置计算应该显示哪些数据
-- 使用transform来移动实际显示的内容
+## 性能优化要点：
+- 使用计算属性缓存计算结果
+- 只渲染可见区域的数据，大大减少DOM节点数量
+- 使用transform做位移，避免重排
+- 使用vue的虚拟DOM和key优化更新
+
+## 和Vue2版本比较：
+- Vue2版本快速滑动起来底部会有空白区域（更新渲染速度慢） 
+- Vue3版本快速滑动起来底部不会出现空白区域（更新渲染速度快）
 
 ## 代码实现
 - 直接复制代码到本地 html 文件运行
@@ -30,8 +35,9 @@ outline: deep
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>虚拟滚动列表</title>
+    <title>虚拟滚动列表 - Vue 3</title>
     <style>
+        /* 容器样式：设置固定高度和滚动条 */
         .list-container {
             height: 400px;
             overflow: auto;
@@ -39,6 +45,7 @@ outline: deep
             border: 1px solid #ccc;
         }
 
+        /* 虚拟滚动条：用于模拟真实滚动高度 */
         .list-phantom {
             position: absolute;
             left: 0;
@@ -47,6 +54,7 @@ outline: deep
             z-index: -1;
         }
 
+        /* 实际显示的内容容器 */
         .list-content {
             left: 0;
             right: 0;
@@ -54,6 +62,7 @@ outline: deep
             position: absolute;
         }
 
+        /* 列表项样式 */
         .list-item {
             padding: 10px;
             border-bottom: 1px solid #eee;
@@ -65,10 +74,8 @@ outline: deep
 <body>
     <div id="app">
         <div class="list-container" @scroll="handleScroll">
-            <!-- 用于撑开滚动条 -->
             <div class="list-phantom" :style="{ height: totalHeight + 'px' }"></div>
-            <!-- 实际显示的列表内容 -->
-            <div class="list-content" :style="{ transform: `translate3d(0, ${startOffset}px, 0)` }">
+            <div class="list-content" :style="{ transform: `translate3d(0, ${scrollTop}px, 0)` }">
                 <div class="list-item" v-for="item in visibleData" :key="item.id">
                     {{ item.value }}
                 </div>
@@ -76,57 +83,65 @@ outline: deep
         </div>
     </div>
 
-    <!-- 加载慢的话，可把代码下载到本地引入使用 -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script>
-        new Vue({
-            el: '#app',
-            data() {
+        const { createApp, ref, computed, onMounted } = Vue
+
+        const app = createApp({
+            setup() {
+                // 定义响应式数据
+                const listData = ref([])          // 存储所有列表数据
+                const itemHeight = ref(50)        // 每个列表项的高度
+                const screenHeight = ref(400)     // 可视区域的高度
+                const scrollTop = ref(0)          // 滚动条距离顶部的距离
+
+                // 计算列表总高度
+                const totalHeight = computed(() => {
+                    return listData.value.length * itemHeight.value
+                })
+
+                // 计算可视区域能显示的列表项数量
+                const visibleCount = computed(() => {
+                    return Math.ceil(screenHeight.value / itemHeight.value)
+                })
+
+                // 计算当前需要显示的数据
+                const visibleData = computed(() => {
+                    // 计算起始索引：根据滚动位置计算第一个可见项的索引
+                    const start = Math.floor(scrollTop.value / itemHeight.value)
+                    // 计算结束索引：起始索引加上可视区域能显示的数量
+                    const end = start + visibleCount.value
+                    // 返回当前需要显示的数据片段
+                    return listData.value.slice(start, end)
+                })
+
+                // 处理滚动事件
+                const handleScroll = (e) => {
+                    // 更新滚动位置
+                    scrollTop.value = e.target.scrollTop
+                }
+
+                // 组件挂载后执行
+                onMounted(() => {
+                    // 初始化数据：生成10万条测试数据
+                    listData.value = Array.from({ length: 100000 }, (_, index) => ({
+                        id: index,
+                        value: `列表项 ${index}`
+                    }))
+                })
+
+                // 返回模板中需要使用的数据和方法
                 return {
-                    // 列表总数据，可调整数据量
-                    listData: [],
-                    // 每一项的高度，可根据需要调整
-                    itemHeight: 50,
-                    // 可视区域高度，可根据需要调整
-                    screenHeight: 400,
-                    // 当前滚动位置
-                    scrollTop: 0,
-                }
-            },
-            computed: {
-                // 列表总高度，用于撑开滚动条
-                totalHeight() {
-                    return this.listData.length * this.itemHeight
-                },
-                // 计算可视区域能显示的数据条数
-                visibleCount() {
-                    return Math.ceil(this.screenHeight / this.itemHeight)
-                },
-                // 计算可视区域的偏移量，用于transform移动
-                startOffset() {
-                    return Math.floor(this.scrollTop / this.itemHeight) * this.itemHeight
-                },
-                // 计算当前可视区域应该显示的数据
-                visibleData() {
-                    const start = Math.floor(this.scrollTop / this.itemHeight)
-                    const end = start + this.visibleCount
-                    return this.listData.slice(start, end)
-                }
-            },
-            created() {
-                // 初始化数据，这里生成10万条测试数据
-                this.listData = Array.from({ length: 100000 }, (_, index) => ({
-                    id: index,
-                    value: `列表项 ${index}`
-                }))
-            },
-            methods: {
-                // 监听滚动事件，更新滚动位置
-                handleScroll(e) {
-                    this.scrollTop = e.target.scrollTop
+                    totalHeight,    // 列表总高度
+                    scrollTop,      // 滚动位置
+                    visibleData,    // 当前显示的数据
+                    handleScroll    // 滚动事件处理函数
                 }
             }
         })
+
+        app.mount('#app')
+
     </script>
 </body>
 </html>
