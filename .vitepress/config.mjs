@@ -13,26 +13,27 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: '首页', link: '/' },
-      { text: '示例', link: '/examples-docs/virtual-scroll-examples' },
+      { text: '案例', link: '/examples-docs/virtual-scroll-examples' },
       { text: '前端', items: [
+          { text: 'javascript', link: '/web-docs/javascript/01-javascript循环效率比较' },
           { text: 'vue2', link: '/web-docs/vue2/' },
           { text: 'vue3', link: '/web-docs/vue3/' },
           { text: 'typescript', link: '/web-docs/ts/' }
       ]},
-      { text: '后端', items: [
-          { text: 'nodejs', link: '/service-docs/nodejs/' },
-          { text: 'java', link: '/service-docs/java/' },
-      ]},
-      {text: '教程',items: [
-        { text: '教程1', link: '/tutorial-docs/' },
-        { text: '教程2', link: '/tutorial-docs/test-2' },
-      ]}
+      // { text: '后端', items: [
+      //     { text: 'nodejs', link: '/service-docs/nodejs/' },
+      //     { text: 'java', link: '/service-docs/java/' },
+      // ]},
+      // {text: '教程',items: [
+      //   { text: '教程1', link: '/tutorial-docs/' },
+      //   { text: '教程2', link: '/tutorial-docs/test-2' },
+      // ]}
     ],
 
     sidebar: {
       '/examples-docs/': [
         {
-          text: '示例',
+          text: '案例',
           items: [
             { text: '虚拟滚动列表', link: '/examples-docs/virtual-scroll-examples' },
             { text: 'Markdown 示例', link: '/examples-docs/markdown-examples' },
@@ -41,6 +42,14 @@ export default defineConfig({
         }
       ],
       // 前端 start
+      '/web-docs/javascript/': [
+        {
+          text: 'javascript',
+          items: [
+            { text: 'javascript循环效率比较', link: '/web-docs/javascript/01-javascript循环效率比较' },
+          ]
+        },
+      ],
       '/web-docs/vue2/': [
         {
           text: 'vue2',
